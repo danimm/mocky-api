@@ -31,30 +31,24 @@ export function useDB() {
         // Prepare the references
         const collectionRef = collection(db, collectionName).withConverter(useConverter<T>())
         const documents = query(collectionRef, where(documentId(), "!=", 'metadata'))
-        const metadataRef = doc(db, collectionName, 'metadata').withConverter(useConverter<T>())
+        const metadataRef = doc(db, collectionName, 'metadata').withConverter(useConverter<M>())
 
         // Fetch the data
         const [
             dataPromise,
             metadataPromise
-        ]: [
-            dataPromise: PromiseSettledResult<QuerySnapshot<T, DocumentData>>,
-            metadataPromise: PromiseSettledResult<DocumentSnapshot<DocumentData>>
         ] = await Promise.allSettled([getDocs(documents), getDoc(metadataRef)])
 
         // Prepare the data
-        const documentsSnapshot = dataPromise.status === 'fulfilled'
-            ? dataPromise.value as QuerySnapshot<T, DocumentData>
-            : [] as unknown as QuerySnapshot<T, DocumentData>
+        const data = dataPromise.status === 'fulfilled' && !dataPromise.value.empty
+            ? dataPromise.value.docs.map((doc) => doc.data())
+            : []
 
-        const metadata: M | null = metadataPromise.status === 'fulfilled' &&  metadataPromise.value.exists()
-            ? metadataPromise.value.data() as M
+        const metadata = metadataPromise.status === 'fulfilled' &&  metadataPromise.value.exists()
+            ? metadataPromise.value.data()
             : null
 
-        return [
-            documentsSnapshot.docs.map((doc) => doc.data()),
-            metadata
-        ];
+        return [data, metadata];
     }
 
     // TODO: Error handler
