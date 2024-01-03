@@ -27,7 +27,7 @@ export function useDB() {
         return await getDocs(q);
     }
 
-    async function fetchFromCollection<T>(collectionName: AvailableMockData) {
+    async function fetchFromCollection<T, M = unknown>(collectionName: AvailableMockData): Promise<[data: T[], metadata: M | null]> {
         // Prepare the references
         const collectionRef = collection(db, collectionName).withConverter(useConverter<T>())
         const documents = query(collectionRef, where(documentId(), "!=", 'metadata'))
@@ -37,23 +37,24 @@ export function useDB() {
         const [
             dataPromise,
             metadataPromise
+        ]: [
+            dataPromise: PromiseSettledResult<QuerySnapshot<T, DocumentData>>,
+            metadataPromise: PromiseSettledResult<DocumentSnapshot<DocumentData>>
         ] = await Promise.allSettled([getDocs(documents), getDoc(metadataRef)])
 
-        // TODO: Error handling
         // Prepare the data
         const documentsSnapshot = dataPromise.status === 'fulfilled'
             ? dataPromise.value as QuerySnapshot<T, DocumentData>
             : [] as unknown as QuerySnapshot<T, DocumentData>
 
-        // TODO: Type metadata
-        const metadata = metadataPromise.status === 'fulfilled'
-            ? metadataPromise.value as DocumentSnapshot
-            : {} as DocumentSnapshot
+        const metadata: M | null = metadataPromise.status === 'fulfilled' &&  metadataPromise.value.exists()
+            ? metadataPromise.value.data() as M
+            : null
 
         return [
             documentsSnapshot.docs.map((doc) => doc.data()),
-            metadata.data()
-        ] as const;
+            metadata
+        ];
     }
 
     // TODO: Error handler
@@ -64,5 +65,5 @@ export function useDB() {
         return snapshot.docs.map((doc) => doc.data())
     }
 
-    return { fetchMockData, fetchSubCollection, fetchFromCollection }
+    return { fetchMockData, fetchSubCollection, fetchFromCollection, db }
 }
