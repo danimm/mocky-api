@@ -1,15 +1,13 @@
-import { Download, DownloadDoc } from "../types/download";
+import { DownloadDoc } from "../types/download";
+import { AvailableMockData } from "../types/availableMockData";
 
 export default defineCachedEventHandler(async (event) => {
-  const { fetchMockData, fetchSubCollection } = useDB();
+  const { fetchFromCollection } = useDB();
 
-    const querySnapshot = await fetchMockData<DownloadDoc>('downloads');
-    let data: null | DownloadDoc = null
+    const [
+        data,
+        metadata
+    ] = await fetchFromCollection<DownloadDoc>(AvailableMockData.Downloads);
 
-    for (const doc of querySnapshot.docs) {
-        const downloads = await fetchSubCollection<Download>(doc.ref, 'downloads');
-        data = { ...doc.data(), downloads };
-    }
-
-    return data;
-}, { swr: true })
+    return { data, metadata }
+}, { swr: false })
