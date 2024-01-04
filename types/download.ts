@@ -1,4 +1,5 @@
 import { Paginator } from "./common/paginator";
+import { Timestamp } from "@firebase/firestore";
 
 export interface Download {
     category: string;
@@ -8,10 +9,12 @@ export interface Download {
 }
 
 export interface DownloadDoc {
-    name: string;
-    headings: string[];
-    search_fields: string[];
-    downloads: Download[];
+    title: string;
+    category: string;
+    download_url: string;
+    file_name: string;
+    format: string;
+    created_at: Timestamp;
 }
 
 export interface DownloadMetadata {

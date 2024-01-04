@@ -6,14 +6,17 @@ import {
     query,
     where,
     DocumentReference,
-    documentId,
+    Timestamp,
     DocumentData,
-    CollectionReference, doc, QuerySnapshot, DocumentSnapshot,
+    CollectionReference,
+    doc,
 } from "@firebase/firestore";
 
 import { app } from "../firebase";
 import { useConverter } from "./converter";
 import { AvailableMockData } from "../types/availableMockData";
+import type { QueryOptions, QueryOptionsConstrains } from "../types/common/queryOptions";
+import { useQueryPagination } from "./useQueryPagination";
 
 export function useDB() {
     const db = getFirestore(app);
@@ -27,11 +30,19 @@ export function useDB() {
         return await getDocs(q);
     }
 
-    async function fetchFromCollection<T, M = unknown>(collectionName: AvailableMockData): Promise<[data: T[], metadata: M | null]> {
+    async function fetchFromCollection<T, M = unknown>(collectionName: AvailableMockData, options?: QueryOptions<T>): Promise<[data: T[] | undefined, metadata: M | null]>
+    async function fetchFromCollection<T, M = unknown>(collectionName: AvailableMockData, options: QueryOptions<T> = {}): Promise<[data: T[], metadata: M | null]> {
         // Prepare the references
         const collectionRef = collection(db, collectionName).withConverter(useConverter<T>())
-        const documents = query(collectionRef, where(documentId(), "!=", 'metadata'))
         const metadataRef = doc(db, collectionName, 'metadata').withConverter(useConverter<M>())
+
+        // Queries and pagination
+        const documents = query(
+            collectionRef,
+            // TODO: remove this for generic use
+            where('created_at', "!=", ''),
+            ...useQueryPagination<T>(options)
+        )
 
         // Fetch the data
         const [
@@ -40,9 +51,9 @@ export function useDB() {
         ] = await Promise.allSettled([getDocs(documents), getDoc(metadataRef)])
 
         // Prepare the data
-        const data = dataPromise.status === 'fulfilled' && !dataPromise.value.empty
+        const data = dataPromise.status === 'fulfilled' && !dataPromise.value?.empty
             ? dataPromise.value.docs.map((doc) => doc.data())
-            : []
+            : undefined
 
         const metadata = metadataPromise.status === 'fulfilled' &&  metadataPromise.value.exists()
             ? metadataPromise.value.data()

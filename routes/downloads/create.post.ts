@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
         for (const download of downloadsMockData) {
             await addDoc(collection(db, Downloads), {
                 ...download,
-                createdAt: Timestamp.now(),
+                'created_at': Timestamp.now(),
             })
         }
 
