@@ -6,10 +6,10 @@ import {
     query,
     where,
     DocumentReference,
-    Timestamp,
+    startAt,
     DocumentData,
     CollectionReference,
-    doc,
+    doc, getCountFromServer, documentId,
 } from "@firebase/firestore";
 
 import { app } from "../firebase";
@@ -34,21 +34,35 @@ export function useDB() {
     async function fetchFromCollection<T, M = unknown>(collectionName: AvailableMockData, options: QueryOptions<T> = {}): Promise<[data: T[], metadata: M | null]> {
         // Prepare the references
         const collectionRef = collection(db, collectionName).withConverter(useConverter<T>())
-        const metadataRef = doc(db, collectionName, 'metadata').withConverter(useConverter<M>())
+        const metadataQuery = doc(db, collectionName, 'metadata').withConverter(useConverter<M>())
 
         // Queries and pagination
-        const documents = query(
+        const allDocumentsQuery = query(
             collectionRef,
             // TODO: remove this for generic use
             where('created_at', "!=", ''),
             ...useQueryPagination<T>(options)
         )
 
+        const countDocumentsQuery = query(collectionRef, where(documentId(), "!=", 'metadata'))
+
         // Fetch the data
         const [
             dataPromise,
-            metadataPromise
-        ] = await Promise.allSettled([getDocs(documents), getDoc(metadataRef)])
+            metadataPromise,
+            totalCountPromise
+        ] = await Promise.allSettled([
+            getDocs(allDocumentsQuery),
+            getDoc(metadataQuery),
+            getCountFromServer(countDocumentsQuery)
+        ])
+
+        const lastPosition = dataPromise.status === 'fulfilled' && dataPromise.value.docs.at(-1)
+        const totalCount = totalCountPromise.status === 'fulfilled' ? totalCountPromise.value.data().count : 0
+
+        // TODO: get URL from the route
+        const loadMore = new URL('http://localhost:3000/downloads')
+        loadMore.searchParams.set('page', lastPosition.ref.id)
 
         // Prepare the data
         const data = dataPromise.status === 'fulfilled' && !dataPromise.value?.empty
@@ -59,7 +73,21 @@ export function useDB() {
             ? metadataPromise.value.data()
             : null
 
-        return [data, metadata];
+        return [
+            data,
+            {
+                ...metadata,
+                paginator: {
+                    count: totalCount,
+                    num_pages: Math.round(totalCount / options.perPage),
+                    per_page: options.perPage,
+                    has_next: true,
+                    current_page: options.page || 1,
+                    load_more: loadMore,
+                    translations: '',
+                }
+            }
+        ];
     }
 
     // TODO: Error handler

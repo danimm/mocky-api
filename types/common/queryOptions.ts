@@ -9,9 +9,8 @@ import {
 export type QueryOptionsConstrains = (QueryLimitConstraint | QueryOrderByConstraint | QueryStartAtConstraint)[]
 
 export interface QueryOptions<T> {
-    page?: number;
+    page?: string;
     perPage?: number;
-    startAt?: DocumentSnapshot<DocumentData> | QuerySnapshot<DocumentData>;
-    limit?: number;
+    startAt?: string;
     transform?: (data: T[]) => T[];
 }

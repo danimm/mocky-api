@@ -23,5 +23,5 @@ export interface DownloadMetadata {
     translations: string;
     categories: string[];
     search_url: string;
-    pagination: Paginator;
+    paginator: Paginator;
 }

@@ -1,9 +1,10 @@
 import type { QueryOptions, QueryOptionsConstrains } from "../types/common/queryOptions";
-import { limit, orderBy, startAt } from "@firebase/firestore";
+import {documentId, limit, orderBy, startAt} from "@firebase/firestore";
 
 export function useQueryPagination<T>(options: QueryOptions<T>): QueryOptionsConstrains {
     const queryOptions: QueryOptionsConstrains = [orderBy('created_at', 'desc')]
-    if (options.limit) queryOptions.push(limit(options.limit))
+    // const queryOptions: QueryOptionsConstrains = [orderBy(documentId())]
+    if (options.perPage) queryOptions.push(limit(options.perPage))
     if (options.startAt) queryOptions.push(startAt(options.startAt))
 
     return queryOptions
