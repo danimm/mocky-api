@@ -9,9 +9,14 @@ export default defineEventHandler(async (event) => {
 
     try {
         for (const download of downloadsMockData) {
-            await addDoc(collection(db, Downloads), {
-                ...download,
-                'created_at': Timestamp.now(),
+            await new Promise((resolve) => {
+                setTimeout(() => {
+                        addDoc(collection(db, Downloads), {
+                            ...download,
+                            'created_at': Timestamp.now(),
+                        })
+                    resolve('')
+                }, 800)
             })
         }
 

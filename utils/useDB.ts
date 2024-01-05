@@ -9,39 +9,49 @@ import {
     startAt,
     DocumentData,
     CollectionReference,
-    doc, getCountFromServer, documentId,
+    doc,
+    getCountFromServer,
+    documentId,
+    DocumentSnapshot,
+    QuerySnapshot,
+    AggregateField,
+    AggregateQuerySnapshot,
+    Firestore,
 } from "@firebase/firestore";
 
 import { app } from "../firebase";
 import { useConverter } from "./converter";
 import { AvailableMockData } from "../types/availableMockData";
-import type { QueryOptions, QueryOptionsConstrains } from "../types/common/queryOptions";
+import {FetchFromCollectionOptions, QueryOptions, QueryOptionsConstrains} from "../types/common/queryOptions";
 import { useQueryPagination } from "./useQueryPagination";
 
 export function useDB() {
     const db = getFirestore(app);
     const mockDataCollectionReference = collection(db, "mockData")
 
-    // TODO: Error handler
-    async function fetchMockData<T>(name: AvailableMockData, collectionRef: CollectionReference<DocumentData, DocumentData> = mockDataCollectionReference) {
-        // Generic type T is inferred from the CollectionRef
-        const ref = collectionRef.withConverter(useConverter<T>());
-        const q = query(ref, where("name", "==", name));
-        return await getDocs(q);
-    }
+    async function fetchFromCollection<T, M = unknown>(collectionName: AvailableMockData, options?: FetchFromCollectionOptions<T>): Promise<[data: T[] | undefined, metadata: M | null]>
+    async function fetchFromCollection<T, M = unknown>(collectionName: AvailableMockData, options: FetchFromCollectionOptions<T> = {}): Promise<[data: T[], metadata: M | null]> {
+        const { useCollectionRef, useDocumentRef, getDocument } = useFirestore<T>(db, collectionName)
 
-    async function fetchFromCollection<T, M = unknown>(collectionName: AvailableMockData, options?: QueryOptions<T>): Promise<[data: T[] | undefined, metadata: M | null]>
-    async function fetchFromCollection<T, M = unknown>(collectionName: AvailableMockData, options: QueryOptions<T> = {}): Promise<[data: T[], metadata: M | null]> {
         // Prepare the references
-        const collectionRef = collection(db, collectionName).withConverter(useConverter<T>())
-        const metadataQuery = doc(db, collectionName, 'metadata').withConverter(useConverter<M>())
+        // const collectionRef = collection(db, collectionName).withConverter(useConverter<T>())
+        // const metadataQuery = doc(db, collectionName, 'metadata').withConverter(useConverter<M>())
+        const collectionRef = useCollectionRef()
+        const metadataQuery = useDocumentRef<M>('metadata')
+        let lastDocument: null | DocumentSnapshot<T, DocumentData>  = null
+
 
         // Queries and pagination
+        if (options.startAfter)
+            lastDocument = await getDocument(options.startAfter)
+            // lastDocument = await getDoc(doc(db, collectionName, options.startAfter).withConverter(useConverter<T>()))
+
+        console.log('lastDocument', lastDocument)
         const allDocumentsQuery = query(
             collectionRef,
             // TODO: remove this for generic use
             where('created_at', "!=", ''),
-            ...useQueryPagination<T>(options)
+            ...useQueryPagination<T>({...options, startAfter: lastDocument })
         )
 
         const countDocumentsQuery = query(collectionRef, where(documentId(), "!=", 'metadata'))
@@ -66,23 +76,28 @@ export function useDB() {
 
         // Prepare the data
         const data = dataPromise.status === 'fulfilled' && !dataPromise.value?.empty
-            ? dataPromise.value.docs.map((doc) => doc.data())
+            ? dataPromise.value.docs.map((doc) => {
+                return { ...doc.data(), created_at: doc.data()['created_at'].toDate() }
+            })
             : undefined
 
         const metadata = metadataPromise.status === 'fulfilled' &&  metadataPromise.value.exists()
             ? metadataPromise.value.data()
             : null
 
+        const numPages = Math.ceil(totalCount / options.perPage)
+
         return [
             data,
             {
                 ...metadata,
+                // TODO: Abstract this
                 paginator: {
                     count: totalCount,
-                    num_pages: Math.round(totalCount / options.perPage),
+                    num_pages: numPages,
                     per_page: options.perPage,
-                    has_next: true,
-                    current_page: options.page || 1,
+                    has_next: (options.perPage * 2) < totalCount,
+                    current_page: options.startAfter || 1,
                     load_more: loadMore,
                     translations: '',
                 }
@@ -90,13 +105,5 @@ export function useDB() {
         ];
     }
 
-    // TODO: Error handler
-    async function fetchSubCollection<T>(docRef: DocumentReference<DocumentData, DocumentData>, path: string) {
-        // Generic type T is inferred from the CollectionRef
-        const subCollectionRef = collection(docRef, path).withConverter(useConverter<T>());
-        const snapshot = await getDocs(subCollectionRef)
-        return snapshot.docs.map((doc) => doc.data())
-    }
-
-    return { fetchMockData, fetchSubCollection, fetchFromCollection, db }
+    return { fetchFromCollection, db }
 }

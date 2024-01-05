@@ -2,15 +2,21 @@ import {
     DocumentData,
     DocumentSnapshot,
     QueryLimitConstraint,
-    QueryOrderByConstraint, QuerySnapshot,
-    QueryStartAtConstraint
+    QueryOrderByConstraint,
+    QueryStartAtConstraint,
 } from "@firebase/firestore";
 
 export type QueryOptionsConstrains = (QueryLimitConstraint | QueryOrderByConstraint | QueryStartAtConstraint)[]
 
+export interface FetchFromCollectionOptions<T> {
+    perPage?: number;
+    startAfter?: string;
+    orderBy?: keyof T;
+    transform?: (data: T[]) => T[];
+}
+
 export interface QueryOptions<T> {
     page?: string;
     perPage?: number;
-    startAt?: string;
-    transform?: (data: T[]) => T[];
+    startAfter?: null | DocumentSnapshot<T, DocumentData>;
 }

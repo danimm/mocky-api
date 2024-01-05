@@ -3,18 +3,14 @@ import { AvailableMockData } from "../../types/availableMockData";
 
 export default defineCachedEventHandler(async (event) => {
   const { fetchFromCollection } = useDB();
+  const { Downloads } = AvailableMockData
 
     const { page = '' } = getQuery<{ page: string }>(event)
 
-    console.log({ page })
-
-    const [
-        data,
-        metadata
-    ] = await fetchFromCollection<DownloadDoc, DownloadMetadata>(
-        AvailableMockData.Downloads,
-        { startAt: page, perPage: 2 }
-    )
+    const [data, metadata] =
+        await fetchFromCollection<DownloadDoc, DownloadMetadata>(Downloads, {
+            startAfter: page, perPage: 7
+        })
 
     if (!data) return createError({
         message: 'No data found in the database or error fetching the data',
