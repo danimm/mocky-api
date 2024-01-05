@@ -1,15 +1,13 @@
-import { DownloadDoc, DownloadMetadata } from "../../types/download";
 import { AvailableMockData } from "../../types/availableMockData";
 
 export default defineCachedEventHandler(async (event) => {
-  const { fetchFromCollection } = useDB();
-  const { Downloads } = AvailableMockData
+  const { fetchFromCollection } = useDB(event);
 
     const { page = '' } = getQuery<{ page: string }>(event)
 
     const [data, metadata] =
-        await fetchFromCollection<DownloadDoc, DownloadMetadata>(Downloads, {
-            startAfter: page, perPage: 7
+        await fetchFromCollection(AvailableMockData.Downloads, {
+            startAfter: page, perPage: 7,
         })
 
     if (!data) return createError({

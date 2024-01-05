@@ -1,10 +1,12 @@
 import {
     DocumentData,
-    DocumentSnapshot,
+    DocumentSnapshot, QueryDocumentSnapshot,
     QueryLimitConstraint,
     QueryOrderByConstraint,
     QueryStartAtConstraint,
 } from "@firebase/firestore";
+
+export type TransformCallback<T, U = T> = (data: QueryDocumentSnapshot<T, DocumentData>) => U
 
 export type QueryOptionsConstrains = (QueryLimitConstraint | QueryOrderByConstraint | QueryStartAtConstraint)[]
 
@@ -12,7 +14,7 @@ export interface FetchFromCollectionOptions<T> {
     perPage?: number;
     startAfter?: string;
     orderBy?: keyof T;
-    transform?: (data: T[]) => T[];
+    transform?: TransformCallback<T>;
 }
 
 export interface QueryOptions<T> {

@@ -3,7 +3,7 @@ export interface Paginator {
     "num_pages": number;
     "per_page": number;
     "has_next": boolean;
-    "current_page": number;
-    "load_more": string;
+    "current_page": string;
+    "load_more": URL;
     "translations": string;
 }

@@ -1,15 +1,13 @@
 import {
-    collection,
-    doc,
     Firestore,
-    getDoc,
-    DocumentReference,
-    DocumentData,
-    getDocs,
-    CollectionReference, query, where
+    collection, doc, getDoc, getDocs,
+    DocumentReference,QuerySnapshot, DocumentSnapshot, QueryDocumentSnapshot,
+    DocumentData
 } from "@firebase/firestore";
+
 import { AvailableMockData } from "../types/availableMockData";
 import { useConverter } from "./converter";
+import { TransformCallback } from "../types/common/queryOptions";
 
 export function useFirestore<T>(db: Firestore, collectionName: AvailableMockData) {
     function useCollectionRef(...pathSegments: string[]) {
@@ -31,5 +29,31 @@ export function useFirestore<T>(db: Firestore, collectionName: AvailableMockData
         return snapshot.docs.map((doc) => doc.data())
     }
 
-    return  { useCollectionRef, useDocumentRef, getDocument, fetchSubCollection }
+    function defaultTransformer<T>(data: QueryDocumentSnapshot<T, DocumentData>): T {
+        return data.data() as T;
+    }
+
+    // Get data
+    function getDocsData<K>(
+        snapshot: QuerySnapshot<K, DocumentData>,
+        transform?: TransformCallback<K>) {
+        return snapshot.docs.map((doc) => {
+            return transform ? transform(doc) : doc.data()
+        })
+    }
+
+    function getDocData<K>(snapshot: DocumentSnapshot<K, DocumentData>) {
+        return snapshot.data()
+    }
+
+    return  {
+        // Fetch Data
+        useCollectionRef,
+        useDocumentRef,
+        getDocument,
+        fetchSubCollection,
+        // Parse Data
+        getDocsData,
+        getDocData,
+    }
 }
