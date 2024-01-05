@@ -1,5 +1,5 @@
 import { AvailableMockData } from "../../types/availableMockData";
-import {collection, deleteDoc, doc, documentId, getDocs, query, where} from "@firebase/firestore";
+import {collection, documentId, getDocs, query, where, writeBatch} from "@firebase/firestore";
 
 export default defineEventHandler(async (event) => {
     const { db } = useDB();
@@ -8,9 +8,11 @@ export default defineEventHandler(async (event) => {
     try {
         const q = query(collection(db, Downloads), where(documentId(), "!=", 'metadata'))
         const docs = await getDocs(q)
-        for (const downloadDoc of docs.docs) {
-            await deleteDoc(doc(db, Downloads, downloadDoc.id));
-        }
+        const batch = writeBatch(db)
+
+        docs.docs.forEach((downloadDoc) => batch.delete(downloadDoc.ref))
+
+        await batch.commit()
 
         return { statusCode: 200 }
 
