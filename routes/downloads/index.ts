@@ -1,13 +1,13 @@
 import { H3Error } from "h3";
 import { AvailableMockData } from "../../types/availableMockData";
-import { DownloadResponse } from "../../types/download";
+import {DownloadMetadata, DownloadResponse} from "../../types/download";
 
 export default defineEventHandler(async (event): Promise<DownloadResponse | H3Error> => {
   const { fetchFromCollection } = useDB(event);
 
     const { page = '', limit = 15 } = getQuery(event)
 
-    const [downloads, metadata] = await fetchFromCollection(AvailableMockData.Downloads, {
+    const [downloads, metadata = {} as DownloadMetadata ] = await fetchFromCollection(AvailableMockData.Downloads, {
         startAfter: page as string,
         perPage: Number(limit),
     })
