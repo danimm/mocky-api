@@ -1,13 +1,30 @@
-export interface Download {
-    category: string;
-    file_name: string;
-    format: string;
-    title: string;
+import { Paginator } from "./common/paginator";
+import { Timestamp } from "@firebase/firestore";
+
+export interface DownloadResponse {
+    headings: string[];
+    search_fields: string[];
+    downloads: DownloadDoc[],
+    translations: string;
+    paginator: Paginator;
+    categories: string[];
+    search_url: string;
 }
 
 export interface DownloadDoc {
-    name: string;
+    title: string;
+    category: string;
+    download_url: string;
+    file_name: string;
+    format: string;
+    created_at: Timestamp;
+}
+
+export interface DownloadMetadata {
     headings: string[];
     search_fields: string[];
-    downloads: Download[];
+    translations: string;
+    categories: string[];
+    search_url: string;
+    paginator: Paginator;
 }
