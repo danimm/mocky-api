@@ -20,6 +20,7 @@ export function usePaginator<T>({ url, lastPositionId, options, totalCount }: {
             has_next: (options.perPage * 2) < totalCount,
             current_page: options.startAfter || '',
             load_more: loadMore,
+            // TODO: remove hardcoded values
             translations: '{\\"load_more_label\\": \\"Mehr anzeigen\\", \\"progress_text\\": \\"{PROGRESS} von {COUNT} werden angezeigt.\\"}',
         }
     }

@@ -6,7 +6,6 @@ import {
 } from "@firebase/firestore";
 
 import { type FetchFromCollectionOptions } from "../types/common/queryOptions";
-import { type DataResponse } from "../types/common/response";
 import { type EventHandlerRequest, H3Event } from "h3";
 
 import { app } from "../firebase";
@@ -51,30 +50,32 @@ export function useDB(event?:  H3Event<EventHandlerRequest>) {
         const countDocumentsQuery = query(collectionRef, where(documentId(), "!=", 'metadata'))
 
         // Fetch the data
-        const response = await Promise.allSettled([
+        const [
+            dataPromise,
+            metadataPromise,
+            totalCountPromise,
+        ] = await Promise.allSettled([
             getDocs(allDocumentsQuery),
             getDoc(metadataQuery),
             getCountFromServer(countDocumentsQuery)
         ])
 
         // TODO: Improve error handler and typing
-        if (response.some(({ status }) => status === 'rejected')) return [null, null]
-
-        const [dataPromise, metadataPromise, totalCountPromise] = response as DataResponse<ResultType, MetadataType>
 
         // Prepare the data
-        const lastPosition = dataPromise.value.docs.at(-1)
-        const totalCount = totalCountPromise.value.data().count || 0
-        const data = !dataPromise.value?.empty ? getDocsData(dataPromise.value) : null
+        const lastPosition = dataPromise.status === 'fulfilled' ? dataPromise.value.docs.at(-1) : null
+        const totalCount = totalCountPromise.status === 'fulfilled' ? totalCountPromise.value.data().count : 0
+        const data = dataPromise.status === 'fulfilled' && !dataPromise.value?.empty ? getDocsData(dataPromise.value) : []
+
         // TODO: Try to implement & type transform callback
         // getDocsData(dataPromise.value, options.transform)
 
-        const metadata =  metadataPromise.value.exists()
+        const metadata =  metadataPromise.status === 'fulfilled' && metadataPromise.value.exists()
             ? {
                 ...getDocData(metadataPromise.value),
                 ...usePaginator({
                     url: event ? getRequestURL(event) : new URL(''),
-                    lastPositionId: lastPosition.ref.id,
+                    lastPositionId: lastPosition?.ref.id,
                     options,
                     totalCount
                 })
