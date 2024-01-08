@@ -57,6 +57,7 @@ export function useDB(event?:  H3Event<EventHandlerRequest>) {
             getCountFromServer(countDocumentsQuery)
         ])
 
+        // TODO: Improve error handler and typing
         if (response.some(({ status }) => status === 'rejected')) return [null, null]
 
         const [dataPromise, metadataPromise, totalCountPromise] = response as DataResponse<ResultType, MetadataType>

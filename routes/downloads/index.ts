@@ -1,20 +1,21 @@
+import { H3Error } from "h3";
 import { AvailableMockData } from "../../types/availableMockData";
+import { DownloadResponse } from "../../types/download";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<DownloadResponse | H3Error> => {
   const { fetchFromCollection } = useDB(event);
 
-    const { page = '' } = getQuery<{ page: string }>(event)
+    const { page = '', limit = 15 } = getQuery(event)
 
-    const [data, metadata] = await fetchFromCollection(AvailableMockData.Downloads, {
-        startAfter: page,
-        perPage: 7,
+    const [downloads, metadata] = await fetchFromCollection(AvailableMockData.Downloads, {
+        startAfter: page as string,
+        perPage: Number(limit),
     })
 
-    if (!data) return createError({
+    if (!downloads) return createError({
         message: 'No data found in the database or error fetching the data',
         statusCode: 404,
     })
 
-
-    return { data, metadata }
+    return { downloads, ...metadata }
 })
