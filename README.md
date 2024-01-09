@@ -1,10 +1,10 @@
 # Mocky API - Patternlab web component library mock data
 
-This project is a small backend target for the creation of the test data API of our Energie 360 web component library based on Patternlab.
+This project is a small backend target for the creation of the test data API of our [Energie 360 web component library](https://e360-patternlab.web.app) based on [Patternlab](https://patternlab.io/).
 
-It is based on nitro, a backend that is part of the open source [unJS](https://unjs.io/) (universal JS) Github organisation and powers other well-known open source frameworks such as [Nuxt](https://nuxt.com/) or [Analog](https://analogjs.org/).
+It is based on **Nitro**, a Node Backend that is part of the open source [unJS](https://unjs.io/) (universal JS) Github organisation and powers other well-known open source frameworks such as [Nuxt](https://nuxt.com/) or [Analog](https://analogjs.org/).
 
-It is a minimalist backend, with file-based routing and written entirely in typescript.
+It is a minimalist backend, that can run the same code base in almost any posting environment (Node, Workers, Edge functions, Bun...) with file-based routing and written entirely in typescript.
 
 Look at the [Nitro documentation](https://nitro.unjs.io/) to learn more.
 
@@ -28,6 +28,7 @@ pnpm install
 Start the development server on <http://localhost:3000>
 
 ```bash
+# npm
 npm run dev
 
 # yarn
@@ -52,10 +53,14 @@ Its use is very simple, we only have to send it the name of the collection from 
 ```typescript
 export enum AvailableMockData {
     Downloads = 'downloads',
+    Magazine = 'magazine',
 }
 
 export interface MockDataMap {
-    [AvailableMockData.Downloads]: [DownloadDoc, DownloadMetadata]
+    ...
+    [AvailableMockData.Downloads]: [DownloadDoc, DownloadMetadata];
+    [AvailableMockData.Magazine]: [MagazineDoc];
+    ...
 }
 ````
 
@@ -65,7 +70,13 @@ Currently, useDB is designed to **return a tuple** consisting of the data itself
 
 This behaviour is likely to change in the future.
 
-There is also a premature implementation (currently under development) of an optional callback transform in case we want to directly modify the data coming from the database.
+WIP 🚧 There is also a premature implementation of an optional callback transform in case we want to directly modify the data coming from the database.
+
+### Auto imports
+
+It also provides a number of auto-imported utilities ([check nitro documentation](https://nitro.unjs.io/guide/auto-imports)) that can be used directly inside our routes or utilities (with type safety of course), but they will not be included in the final bundle if we don't make use of them: they will only be available globally during development.
+
+Adding of course the utilities that we develop ourselves: any file that we create inside the `utils` folder, will also be globally accessible as one of the framework's own utilities would be.
 
 ## Production
 
@@ -85,7 +96,14 @@ pnpm run build
 Locally preview production build:
 
 ```bash
+# npm
 npm run preview
+
+# yarn
+yarn run preview
+
+# pnpm
+pnpm run preview
 ```
 
 ## Deployment
