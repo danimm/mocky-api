@@ -2,7 +2,7 @@ import {
     getFirestore,
     getDocs, getDoc, query, where,
     getCountFromServer, documentId, DocumentSnapshot,
-    DocumentData, collection,
+    DocumentData,
 } from "@firebase/firestore";
 
 import { type FetchFromCollectionOptions } from "../types/common/queryOptions";
