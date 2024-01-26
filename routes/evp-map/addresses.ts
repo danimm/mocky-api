@@ -10,5 +10,5 @@ export default defineEventHandler(async (event) => {
         statusCode: 404,
     })
 
-    return { addresses }
+    return { addresses, total: addresses.length }
 })
