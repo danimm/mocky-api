@@ -60,11 +60,6 @@ export function useDB(event?:  H3Event<EventHandlerRequest>) {
             getCountFromServer(countDocumentsQuery)
         ])
 
-        console.log('hey..')
-        const col = query(allDocumentsQuery)
-        const d = await getDocs(col)
-        console.log({d: getDocsData(d)})
-
         // TODO: Improve error handler and typing
 
         // Prepare the data
