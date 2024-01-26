@@ -10,5 +10,5 @@ export default defineEventHandler(async (event) => {
         statusCode: 404,
     })
 
-    return { coordinates }
+    return { ...coordinates[0] }
 })
