@@ -2,7 +2,7 @@ import {
     getFirestore,
     getDocs, getDoc, query, where,
     getCountFromServer, documentId, DocumentSnapshot,
-    DocumentData,
+    DocumentData, collection,
 } from "@firebase/firestore";
 
 import { type FetchFromCollectionOptions } from "../types/common/queryOptions";
@@ -21,7 +21,7 @@ export function useDB(event?:  H3Event<EventHandlerRequest>) {
         (collectionName: MockDataKey, options?: FetchFromCollectionOptions<ResultType>): Promise<[data: ResultType[] | null, metadata: MetadataType | null]>
     async function fetchFromCollection
     <MockDataKey extends AvailableMockData, ResultType = MockDataMap[MockDataKey][0], MetadataType = MockDataMap[MockDataKey][1]>
-        (collectionName: MockDataKey, options: FetchFromCollectionOptions<ResultType> = {}): Promise<[data: ResultType[] | null, metadata: MetadataType | null]>
+        (collectionName: MockDataKey, options: FetchFromCollectionOptions<ResultType> = { disableSort: true }): Promise<[data: ResultType[] | null, metadata: MetadataType | null]>
     {
         const {
             useCollectionRef,
@@ -36,11 +36,11 @@ export function useDB(event?:  H3Event<EventHandlerRequest>) {
         const metadataQuery = useDocumentRef<MetadataType>('metadata')
         let lastDocument: null | DocumentSnapshot<ResultType, DocumentData>  = null
 
-
         // Queries and pagination
         if (options.startAfter) lastDocument = await getDocument(options.startAfter)
 
-        const allDocumentsQuery = query(
+        // TODO: Infer the type of the query based on the existence of the createdAt field
+        const allDocumentsQuery = options.disableSort ? collectionRef : query(
             collectionRef,
             // TODO: remove this for generic use
             where('created_at', "!=", ''),
@@ -59,6 +59,11 @@ export function useDB(event?:  H3Event<EventHandlerRequest>) {
             getDoc(metadataQuery),
             getCountFromServer(countDocumentsQuery)
         ])
+
+        console.log('hey..')
+        const col = query(allDocumentsQuery)
+        const d = await getDocs(col)
+        console.log({d: getDocsData(d)})
 
         // TODO: Improve error handler and typing
 
