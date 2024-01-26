@@ -13,6 +13,7 @@ export type QueryOptionsConstrains = (QueryLimitConstraint | QueryOrderByConstra
 export interface FetchFromCollectionOptions<T> {
     perPage?: number;
     startAfter?: string;
+    disableSort?: boolean;
     orderBy?: keyof T;
     transform?: TransformCallback<T>;
 }
