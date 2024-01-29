@@ -2,8 +2,7 @@ import { AvailableMockData } from "../../types/availableMockData";
 
 export default defineEventHandler(async (event) => {
     const { fetchFromCollection } = useDB(event);
-    
-    // TODO: Figure out how to use lat and lng
+
     const {
         id,
         lat ,
