@@ -5,9 +5,10 @@ export default defineEventHandler(async (event) => {
 
     const {
         id,
-        lat ,
-        lng
+        // lat ,
+        // lng
     } = getQuery(event)
+
 
     const [coordinates ] = await fetchFromCollection(AvailableMockData.EvpMap_coordinates, {
         // TODO: Remove hardcoded query

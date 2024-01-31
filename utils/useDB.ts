@@ -1,20 +1,17 @@
 import {
     getFirestore,
+    collection,
     getDocs, getDoc, query, where,
     getCountFromServer, documentId, DocumentSnapshot,
-    DocumentData, QueryConstraint, Query, addDoc,
+    DocumentData, Query, addDoc, CollectionReference,
 } from "@firebase/firestore";
-
-import { type FetchFromCollectionOptions } from "../types/common/queryOptions";
 import { type EventHandlerRequest, H3Event } from "h3";
 
 import { app } from "../firebase";
+import { type FetchFromCollectionOptions } from "../types/common/queryOptions";
 import { AvailableMockData, MockDataMap } from "../types/availableMockData";
 import { useQueryPagination } from "./useQueryPagination";
 import { usePaginator } from "./usePaginator";
-import firebase from "firebase/compat";
-import CollectionReference = firebase.firestore.CollectionReference;
-import {collection} from "firebase/firestore";
 
 export function useDB(event?:  H3Event<EventHandlerRequest>) {
     const db = getFirestore(app);
