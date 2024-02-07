@@ -1,19 +1,11 @@
-import { WhereFilterOp } from "@firebase/firestore";
-import firebase from "firebase/compat";
-import FieldPath = firebase.firestore.FieldPath;
-
 import { AvailableMockData } from "../../types/availableMockData";
 
 export default defineEventHandler(async (event) => {
     const { fetchFromCollection } = useDB(event);
-    const { id, popUp} = getQuery(event)
-
-    const queryPayload: [string | FieldPath, WhereFilterOp, unknown] =
-        // Enable search for perimeter types
-        popUp ? ['popup_option', '==', popUp] : ['id', '==', id]
+    const { lat, lng} = getQuery(event)
 
     const [coordinates ] = await fetchFromCollection(AvailableMockData.EvpMap_coordinates, {
-        query: queryPayload
+        query: ['lat', '==', lat]
     })
 
     if (!coordinates.length) {
