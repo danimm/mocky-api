@@ -1,14 +1,14 @@
 import {
     getFirestore,
+    collection,
     getDocs, getDoc, query, where,
     getCountFromServer, documentId, DocumentSnapshot,
-    DocumentData,
+    DocumentData, Query, addDoc, CollectionReference,
 } from "@firebase/firestore";
-
-import { type FetchFromCollectionOptions } from "../types/common/queryOptions";
 import { type EventHandlerRequest, H3Event } from "h3";
 
 import { app } from "../firebase";
+import { type FetchFromCollectionOptions } from "../types/common/queryOptions";
 import { AvailableMockData, MockDataMap } from "../types/availableMockData";
 import { useQueryPagination } from "./useQueryPagination";
 import { usePaginator } from "./usePaginator";
@@ -21,7 +21,7 @@ export function useDB(event?:  H3Event<EventHandlerRequest>) {
         (collectionName: MockDataKey, options?: FetchFromCollectionOptions<ResultType>): Promise<[data: ResultType[] | null, metadata: MetadataType | null]>
     async function fetchFromCollection
     <MockDataKey extends AvailableMockData, ResultType = MockDataMap[MockDataKey][0], MetadataType = MockDataMap[MockDataKey][1]>
-        (collectionName: MockDataKey, options: FetchFromCollectionOptions<ResultType> = { disableSort: true }): Promise<[data: ResultType[] | null, metadata: MetadataType | null]>
+        (collectionName: MockDataKey, options: FetchFromCollectionOptions<ResultType> = {}): Promise<[data: ResultType[] | null, metadata: MetadataType | null]>
     {
         const {
             useCollectionRef,
@@ -36,16 +36,27 @@ export function useDB(event?:  H3Event<EventHandlerRequest>) {
         const metadataQuery = useDocumentRef<MetadataType>('metadata')
         let lastDocument: null | DocumentSnapshot<ResultType, DocumentData>  = null
 
-        // Queries and pagination
-        if (options.startAfter) lastDocument = await getDocument(options.startAfter)
+        const opts: FetchFromCollectionOptions<ResultType> = {
+            disableSort: true,
+            ...options,
+        }
 
-        // TODO: Infer the type of the query based on the existence of the createdAt field
-        const allDocumentsQuery = options.disableSort ? collectionRef : query(
-            collectionRef,
-            // TODO: remove this for generic use
-            where('created_at', "!=", ''),
-            ...useQueryPagination<ResultType>({...options, startAfter: lastDocument })
-        )
+        // Queries and pagination
+        if (opts.startAfter) lastDocument = await getDocument(opts.startAfter)
+
+        let allDocumentsQuery: CollectionReference<ResultType> | Query<ResultType> = collectionRef
+        if (opts.query) {
+            const [field, optStr, value] = opts.query
+            allDocumentsQuery = query(collectionRef, where(field, optStr, value))
+        }
+        if (!opts.disableSort) {
+            allDocumentsQuery = query(
+                collectionRef,
+                // TODO: Infer the type of the query based on the existence of the createdAt field
+                where('created_at', "!=", ''), // available in downloads right now
+                ...useQueryPagination<ResultType>({...opts, startAfter: lastDocument })
+            )
+        }
 
         const countDocumentsQuery = query(collectionRef, where(documentId(), "!=", 'metadata'))
 
@@ -76,7 +87,7 @@ export function useDB(event?:  H3Event<EventHandlerRequest>) {
                 ...usePaginator({
                     url: event ? getRequestURL(event) : new URL(''),
                     lastPositionId: lastPosition?.ref.id,
-                    options,
+                    options: opts,
                     totalCount
                 })
             }
@@ -85,5 +96,9 @@ export function useDB(event?:  H3Event<EventHandlerRequest>) {
         return [data, metadata];
     }
 
-    return { fetchFromCollection, db }
+    async function addDocumentToCollection(collectionName: AvailableMockData, body: unknown) {
+        return await addDoc(collection(db, collectionName), body)
+    }
+
+    return { fetchFromCollection, addDocumentToCollection, db }
 }

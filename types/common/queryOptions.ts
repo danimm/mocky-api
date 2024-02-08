@@ -3,8 +3,10 @@ import {
     DocumentSnapshot, QueryDocumentSnapshot,
     QueryLimitConstraint,
     QueryOrderByConstraint,
-    QueryStartAtConstraint,
+    QueryStartAtConstraint, WhereFilterOp,
 } from "@firebase/firestore";
+import firebase from "firebase/compat";
+import FieldPath = firebase.firestore.FieldPath;
 
 export type TransformCallback<T, U = T> = (data: QueryDocumentSnapshot<T, DocumentData>) => U
 
@@ -15,6 +17,7 @@ export interface FetchFromCollectionOptions<T> {
     startAfter?: string;
     disableSort?: boolean;
     orderBy?: keyof T;
+    query?: [string | FieldPath, WhereFilterOp, unknown];
     transform?: TransformCallback<T>;
 }
 
