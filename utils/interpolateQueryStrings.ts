@@ -4,18 +4,33 @@ import { TemplatingOptions } from "../types/templating";
 function replaceMatch(value: unknown, index: number): unknown {
     if (typeof value !== 'string') return value
 
+    // Matches all the {{}} queries, could be more than one
     const regex = /\{\{([^}]+)\}\}/g;
-    const match = regex.exec(value)
+    const matches: Set<string> = new Set();
 
-    if (match === null) return value
+    Array.from(value.matchAll(regex), match => {
+        matches.add(match[1].trim());
+    });
 
-    const matchStr = match[1].trim()
-    if (matchStr === '@index') return index
-    else if (matchStr in generators) return generators[matchStr]()
+    // We need to update the value with the matches
+    let result = value;
+
+    // Iterate over all the matches, in case there are more than one
+    for (const match of matches) {
+        if (match === '@index') return index
+        else if (match in generators) {
+            const regexMatch = new RegExp(`\\{\\{\\s*(${match})\\s*\\}\\}`, 'g')
+            result = result.replaceAll(regexMatch, generators[match]());
+        }
+    }
+
+    return result
 }
 
 function interpolateMockData(template: unknown, index: number): unknown {
+    // Basic array
     if (Array.isArray(template)) return template.map((val) => replaceMatch(val, index))
+    // Create a deep copy of the original object
     let copy = structuredClone(template as Record<string, unknown>)
 
     for (let key in copy) {
