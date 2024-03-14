@@ -3,7 +3,7 @@ import {generateMockData} from "../utils/interpolateQueryStrings";
 
 export default defineEventHandler(async (event) => {
     const {
-        templatingOptions: { repeat = 1 },
+        options: { repeat = 1 },
         template
     } = await readBody<TemplatingRequest>(event)
 

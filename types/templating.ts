@@ -5,6 +5,6 @@ export interface TemplatingOptions {
 }
 
 export interface TemplatingRequest {
-    templatingOptions?: TemplatingOptions
+    options?: TemplatingOptions
     template: Record<string, unknown>
 }
