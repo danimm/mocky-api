@@ -4,5 +4,5 @@ export interface TemplatingOptions {
 
 export interface TemplatingRequest {
     templatingOptions?: TemplatingOptions
-    query: Record<string, unknown>
+    template: Record<string, unknown>
 }

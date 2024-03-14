@@ -13,13 +13,13 @@ function replaceMatch(value: unknown): unknown {
     if (matchStr in generators) return generators[matchStr]()
 }
 
-function interpolateQueryStrings(query: Record<string, unknown>) {
-    const copy = structuredClone(query)
+function interpolateMockData(template: Record<string, unknown>) {
+    const copy = structuredClone(template)
 
     for (let key in copy) {
         // TODO: Support arrays
         if (typeof copy[key] === 'object')
-            copy[key] = interpolateQueryStrings(copy[key] as Record<string, unknown>)
+            copy[key] = interpolateMockData(copy[key] as Record<string, unknown>)
         else
             copy[key] = replaceMatch(copy[key])
     }
@@ -27,6 +27,6 @@ function interpolateQueryStrings(query: Record<string, unknown>) {
     return copy;
 }
 
-export function generateMockData(query: Record<string, unknown>, index: number) {
-    return interpolateQueryStrings(query);
+export function generateMockData(template: Record<string, unknown>, index: number) {
+    return interpolateMockData(template);
 }

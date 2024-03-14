@@ -4,10 +4,10 @@ import {generateMockData} from "../utils/interpolateQueryStrings";
 export default defineEventHandler(async (event) => {
     const {
         templatingOptions = {},
-        query
+        template
     } = await readBody<TemplatingRequest>(event)
 
     return new Array(templatingOptions.repeat || 1)
         .fill(null)
-        .map((_, index) => generateMockData(query, index))
+        .map((_, index) => generateMockData(template, index))
 })
