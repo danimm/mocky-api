@@ -7,7 +7,8 @@
     "preview": "node .output/server/index.mjs"
   },
   "dependencies": {
-    "firebase": "^10.7.1",
+    "@ngneat/falso": "7.2.0",
+    "firebase": "10.7.1",
     "nitropack": "latest"
   }
 }
