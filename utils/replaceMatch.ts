@@ -16,6 +16,7 @@ export function replaceMatch(value: unknown, index: number): unknown {
 
     // Iterate over all the matches, in case there are more than one
     for (const match of matches) {
+        // TODO: Add more options: url, params, etc
         if (match === '@index') return index
         else if (match in generators) {
             const regexMatch = new RegExp(`\\{\\{\\s*(${match})\\s*\\}\\}`, 'g')

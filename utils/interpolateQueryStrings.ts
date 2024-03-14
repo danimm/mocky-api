@@ -36,7 +36,7 @@ function interpolateMockData(template: unknown, index: number): unknown {
         if (Array.isArray(copy[key]) && !('someOf' in copy) && !('oneOf' in copy)) {
             copy[key] = (copy[key] as unknown[]).map((val) => replaceMatch(val, index))
 
-        // Objects or template arrays
+            // Objects or template arrays
         } else if (typeof copy[key] === 'object') {
 
             // Normal Template Array
@@ -60,7 +60,7 @@ function interpolateMockData(template: unknown, index: number): unknown {
                 copy[key] = interpolateMockData(copy[key] as Record<string, unknown>, index)
             }
 
-        // Primitive values
+            // Primitive values
         } else {
             copy[key] = replaceMatch(copy[key], index)
         }
