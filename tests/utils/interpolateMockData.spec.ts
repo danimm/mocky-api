@@ -16,15 +16,18 @@ describe("template engine: utils/interpolateMockData", (it) => {
         expect(match).not.toBe(mockData)
     })
 
-    it('should interpolate an array of mock data', () => {
+    it('should interpolate an array of some of the provided inputs', () => {
         const mockData = {
             someOf: ['{{randFirstName}}', '{{randLastName}}']
         }
 
         const match = interpolateMockData(mockData)
-
-        expect(match).not.toBe(mockData)
-        expect(match).toBeTypeOf('object')
+        expect(match).not.toBe(mockData.someOf)
         expect(Array.isArray(match)).toBeTruthy()
+
+        const someOf = ['test', 'test']
+
+        const match2 = interpolateMockData({ someOf })
+        expect(match2).toContain('test')
     })
 })
