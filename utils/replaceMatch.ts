@@ -1,6 +1,6 @@
 import * as generators from "@ngneat/falso";
 
-export function replaceMatch(value: unknown, index: number): unknown {
+export function replaceMatch(value: unknown, index: number = 0): unknown {
     if (typeof value !== 'string') return value
 
     // Matches all the {{}} queries, could be more than one

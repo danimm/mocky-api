@@ -1,6 +1,7 @@
 import { TemplatingOptions } from "../types/templating";
+import { replaceMatch } from './replaceMatch'
 
-function interpolateMockData(template: unknown, index: number): unknown {
+export function interpolateMockData(template: unknown, index: number = 0): unknown {
     // Basic array
     if (Array.isArray(template)) return template.map((val) => replaceMatch(val, index))
 
@@ -67,8 +68,4 @@ function interpolateMockData(template: unknown, index: number): unknown {
     }
 
     return copy;
-}
-
-export function generateMockData(template: Record<string, unknown>, index: number) {
-    return interpolateMockData(template, index);
 }

@@ -1,13 +1,7 @@
 import { TemplatingRequest } from "../types/templating";
-import {generateMockData} from "../utils/interpolateQueryStrings";
 
 export default defineEventHandler(async (event) => {
-    const {
-        options: { repeat = 1 },
-        template
-    } = await readBody<TemplatingRequest>(event)
+    const { options, template} = await readBody<TemplatingRequest>(event)
 
-    return new Array(repeat)
-        .fill(null)
-        .map((_, index) => generateMockData(template, index))
+    return generateMockData(template, options)
 })
