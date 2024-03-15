@@ -36,9 +36,7 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
     }
 
     // TODO: Improve the typing and avoid repeating the same code
-    // @ts-ignore
-    if ('someOf' in copy) {
-        const { someOf = []  } = copy as TemplatingOptions
+    if (someOf && someOf.length > 0) {
         // Generate an array with elements between 1 and length of someOf
         const randomLength = Math.floor(Math.random() * someOf.length) + 1
 
