@@ -6,9 +6,35 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
     if (Array.isArray(template)) return template.map((val) => replaceMatch(val, index))
 
     // Create a deep copy of the original object
-    let copy = structuredClone(template as Record<string, unknown>)
+    let copy: unknown | Record<string, unknown>  = structuredClone(template as Record<string, unknown>)
+
+    const { templatingOptions = null } = (copy as Record<string, unknown>)
+
+    // TODO: Improve the types
+    if (templatingOptions && templatingOptions['switchCase']) {
+        const {
+            switchCase: { check, defaultCase, cases }
+        } = templatingOptions as TemplatingOptions
+
+        if ([check, defaultCase, cases].some((val) => val === undefined)) {
+            return copy
+        }
+
+        const match = replaceMatch(check, index)
+
+        const foundMatch = cases.find((c) => {
+            if (typeof c.match === 'string' && typeof match === 'number')
+                return Number(c.match) === match
+            else
+                return c.match === match
+        })
+
+        copy = foundMatch ? replaceMatch(foundMatch.value, index) : replaceMatch(defaultCase, index)
+        return copy
+    }
 
     // TODO: Improve the typing and avoid repeating the same code
+    // @ts-ignore
     if ('someOf' in copy) {
         const { someOf = []  } = copy as TemplatingOptions
         // Generate an array with elements between 1 and length of someOf
@@ -21,7 +47,7 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
         })
 
         return copy
-    } else if ('oneOf' in copy) {
+    } else if ('oneOf' in (copy as  Record<string, unknown>)) {
         const { oneOf = []  } = copy as TemplatingOptions
         // Get a random index from the oneOf array
         const randomIndex = Math.floor(Math.random() * oneOf.length)
@@ -32,8 +58,10 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
     }
 
     // Iterate over the object and replace the values
+    // @ts-ignore
     for (let key in copy) {
         // Normal arrays
+        // @ts-ignore
         if (Array.isArray(copy[key]) && !('someOf' in copy) && !('oneOf' in copy)) {
             copy[key] = (copy[key] as unknown[]).map((val) => replaceMatch(val, index))
 
