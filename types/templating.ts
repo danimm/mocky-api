@@ -4,11 +4,13 @@ export interface TemplatingOptions {
     value?: unknown
     oneOf?: Array<unknown>
     someOf?: Array<unknown>
-    switchCase?: {
-        check: unknown
-        defaultCase: unknown
-        cases: Array<{ match: unknown; value: unknown }>
-    }
+    switchCase?: SwitchCase
+}
+
+export interface SwitchCase {
+    check: unknown
+    defaultCase: unknown
+    cases: Array<{ match: unknown; value: unknown }>
 }
 
 export interface TemplatingRequest {

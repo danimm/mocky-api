@@ -1,4 +1,4 @@
-import { TemplatingOptions } from "../types/templating";
+import { TemplatingOptions, SwitchCase } from "../types/templating";
 import { replaceMatch } from './replaceMatch'
 
 export function interpolateMockData(template: unknown, index: number = 0): unknown {
@@ -8,13 +8,15 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
     // Create a deep copy of the original object
     let copy: unknown | Record<string, unknown>  = structuredClone(template as Record<string, unknown>)
 
-    const { templatingOptions = null } = (copy as Record<string, unknown>)
+    const { templatingOptions = {} } = copy as { templatingOptions: TemplatingOptions }
+    const {
+        switchCase = null,
+        oneOf = null,
+        someOf = null
+    } = templatingOptions
 
-    // TODO: Improve the types
-    if (templatingOptions && templatingOptions['switchCase']) {
-        const {
-            switchCase: { check, defaultCase, cases }
-        } = templatingOptions as TemplatingOptions
+    if (switchCase as SwitchCase) {
+        const {check, defaultCase, cases} = templatingOptions.switchCase
 
         if ([check, defaultCase, cases].some((val) => val === undefined)) {
             return copy
@@ -29,7 +31,7 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
                 return c.match === match
         })
 
-        copy = foundMatch ? replaceMatch(foundMatch.value, index) : replaceMatch(defaultCase, index)
+        copy = foundMatch !== undefined ? replaceMatch(foundMatch.value, index) : replaceMatch(defaultCase, index)
         return copy
     }
 
@@ -69,6 +71,7 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
         } else if (typeof copy[key] === 'object') {
 
             // Normal Template Array
+            // @ts-ignore
             if ('templatingArray' in copy) {
                 const {
                     repeat = 1,
