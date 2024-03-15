@@ -1,4 +1,3 @@
-import { describe, expect } from "vitest";
 import { interpolateMockData } from "../../utils/interpolateMockData";
 
 describe("template engine: utils/interpolateMockData", (it) => {

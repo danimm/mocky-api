@@ -1,4 +1,3 @@
-import { describe, expect } from "vitest";
 import { replaceMatch } from "../../utils/replaceMatch";
 
 describe("template engine: utils/replaceMatch", (it) => {

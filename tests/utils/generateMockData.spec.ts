@@ -1,4 +1,3 @@
-import { describe, expect } from "vitest";
 import { generateMockData } from "../../utils/generateMockData";
 
 describe("template engine: utils/generateMockData", (it) => {
