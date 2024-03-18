@@ -37,6 +37,6 @@ describe("template engine: utils/replaceMatch", (it) => {
     it("should not replace all the existing matches", () => {
         const str = '{{Energie360}}, {{randNumber}}'
         const match = replaceMatch(str)
-        expect(match).toMatch('{{Energie360}}')
+        expect((match as string).includes('{{Energie360}}')).toBeTruthy()
     })
 })

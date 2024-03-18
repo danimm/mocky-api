@@ -15,7 +15,8 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
         someOf = null,
         repeat = null,
         type = 'array',
-        value
+        value,
+        options= null
     } = templatingOptions
 
     // ** Switch case **
@@ -69,7 +70,7 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
     for (let key in copy as Record<string, unknown>) {
         // Normal arrays
         if (Array.isArray(copy[key]) && someOf === null && oneOf === null) {
-            copy[key] = (copy[key] as unknown[]).map((val: unknown) => replaceMatch(val, index))
+            copy[key] = (copy[key] as unknown[]).map((val: unknown) => replaceMatch(val, index, options))
 
         // Objects or template arrays
         } else if (typeof copy[key] === 'object') {
@@ -86,7 +87,17 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
 
             // Normal object
             } else {
-                copy[key] = interpolateMockData(copy[key] as Record<string, unknown>, index)
+                if (value !== undefined) {
+                    if (typeof value === 'string' && options !== null) {
+                        copy = replaceMatch(value, index, options)
+                    } else {
+                        // @ts-ignore
+                        copy = interpolateMockData(copy[key] as Record<string, unknown>, index)?.value
+                    }
+
+                } else {
+                    copy[key] = interpolateMockData(copy[key] as Record<string, unknown>, index)
+                }
             }
 
         // Primitive values

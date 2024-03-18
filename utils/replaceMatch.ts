@@ -1,6 +1,6 @@
 import * as generators from "@ngneat/falso";
 
-export function replaceMatch(value: unknown, index: number = 0): unknown {
+export function replaceMatch(value: unknown, index: number = 0, options?: Record<string, unknown>): unknown {
     if (typeof value !== 'string') return value
 
     // Matches all the {{}} queries, could be more than one
@@ -20,7 +20,9 @@ export function replaceMatch(value: unknown, index: number = 0): unknown {
         if (match === '@index') return index
         else if (match in generators) {
             const regexMatch = new RegExp(`\\{\\{\\s*(${match})\\s*\\}\\}`, 'g')
-            result = result.replaceAll(regexMatch, generators[match]());
+            const replace = options !== undefined ? generators[match](options) : generators[match]()
+
+            result = matches.size === 1 ? replace : result.replaceAll(regexMatch, replace)
         }
     }
 

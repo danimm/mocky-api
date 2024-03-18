@@ -4,6 +4,7 @@ export interface TemplatingOptions {
     value?: unknown
     oneOf?: Array<unknown>
     someOf?: Array<unknown>
+    options?: Record<string, unknown>
     switchCase?: SwitchCase
 }
 
