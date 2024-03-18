@@ -41,4 +41,18 @@ describe("template engine: utils/interpolateMockData", (it) => {
         const match = interpolateMockData(mockData)
         expect(oneOf.includes(match as string)).toBeTruthy()
     })
+
+    it('it should combine the provided inputs as a several length array ', () => {
+        const oneOf = ['Dani', 'Dani']
+        const mockData = {
+            templatingOptions: {
+                oneOf,
+                repeat: 3
+            }
+        }
+
+        const match = interpolateMockData(mockData)
+        expect(match).toContain(oneOf[0])
+        expect(match).toHaveLength(3)
+    })
 })

@@ -57,7 +57,8 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
         const randomIndex = Math.floor(Math.random() * oneOf.length)
 
         // @ts-ignore
-        copy = replaceMatch(oneOf[randomIndex], index)
+        replaceMatch(oneOf[randomIndex], index)
+        copy = repeat !== null ? new Array(repeat).fill(null).map(() => replaceMatch(oneOf[randomIndex], index)) : replaceMatch(oneOf[randomIndex], index)
         return copy
     }
 
