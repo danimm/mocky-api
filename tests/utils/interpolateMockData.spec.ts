@@ -40,8 +40,13 @@ describe("template engine: utils/interpolateMockData", (it) => {
         const match = interpolateMockData(mockData) as { age: number, house: { type: string }}
         expect(match.age).oneOf(oneOfNumbers)
         expect(match.house.type).oneOf(oneOHouseType)
+    })
 
-        const mockData2 = {
+    // It should interpolate a complex mock data structure using options
+    it('should interpolate a complex mock data structure using options', () => {
+        const oneOfNumbers = [10, 20]
+        const oneOHouseType = ['house', 'apartment']
+        const mockData = {
             age: {
                 templatingOptions: {
                     value: '{{randNumber}}',
@@ -62,14 +67,14 @@ describe("template engine: utils/interpolateMockData", (it) => {
             }
         }
 
-        const match2 = interpolateMockData(mockData2) as {
+        const match = interpolateMockData(mockData) as {
             age: number, address: { type: string, street: string }
         }
 
-        expect(match2.age).toBeGreaterThan(10)
-        expect(match2.age).toBeLessThan(20)
-        expect(match2.address.type).oneOf(oneOHouseType)
-        expect(match2.address.street).toBe('Musterstrasse')
+        expect(match.age).toBeGreaterThan(10)
+        expect(match.age).toBeLessThan(20)
+        expect(match.address.type).oneOf(oneOHouseType)
+        expect(match.address.street).toBe('Musterstrasse')
     })
 
     it('should interpolate an array of some of the provided inputs', () => {
