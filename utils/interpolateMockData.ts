@@ -6,7 +6,7 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
     if (Array.isArray(template)) return template.map((val) => replaceMatch(val, index))
 
     // Create a deep copy of the original object
-    let copy: unknown | Record<string, unknown>  = structuredClone(template as Record<string, unknown>)
+    let copy: unknown  = structuredClone(template as Record<string, unknown>)
 
     const { templatingOptions = {} } = copy as { templatingOptions: TemplatingOptions }
     const {
@@ -14,9 +14,11 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
         oneOf = null,
         someOf = null,
         repeat = null,
-        type = null,
+        type = 'array',
+        value
     } = templatingOptions
 
+    // ** Switch case **
     if (switchCase as SwitchCase) {
         const { check, defaultCase, cases} = templatingOptions.switchCase
 
@@ -27,6 +29,7 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
         const match = replaceMatch(check, index)
 
         const foundMatch = cases.find((c) => {
+            // Cast the match to a number if it's a string in order to compare it
             if (typeof c.match === 'string' && typeof match === 'number')
                 return Number(c.match) === match
             else
@@ -38,12 +41,11 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
         return copy
     }
 
-    // TODO: Improve the typing and avoid repeating the same code
+    // ** Some of the provided inputs **
     if (someOf && someOf.length > 0) {
         // Generate an array with elements between 1 and length of someOf
         const randomLength = Math.floor(Math.random() * someOf.length) + 1
 
-        // @ts-ignore
         copy = new Array(randomLength).fill(null).map(() => {
             const elementToGenerate = someOf[Math.floor(Math.random() * someOf.length)]
             return replaceMatch(elementToGenerate, index)
@@ -52,6 +54,7 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
         return copy
     }
 
+    // ** One of the provided inputs **
     if (oneOf && oneOf.length > 0) {
         // Get a random index from the oneOf array
         const randomIndex = Math.floor(Math.random() * oneOf.length)
@@ -62,40 +65,31 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
         return copy
     }
 
-    // Iterate over the object and replace the values
-    // @ts-ignore
-    for (let key in copy) {
+    // ** Iterate over the object and replace the values **
+    for (let key in copy as Record<string, unknown>) {
         // Normal arrays
-        // @ts-ignore
-        if (Array.isArray(copy[key]) && !('someOf' in copy) && !('oneOf' in copy)) {
-            copy[key] = (copy[key] as unknown[]).map((val) => replaceMatch(val, index))
+        if (Array.isArray(copy[key]) && someOf === null && oneOf === null) {
+            copy[key] = (copy[key] as unknown[]).map((val: unknown) => replaceMatch(val, index))
 
-            // Objects or template arrays
+        // Objects or template arrays
         } else if (typeof copy[key] === 'object') {
 
             // Normal Template Array
-            // @ts-ignore
-            if ('templatingArray' in copy) {
-                const {
-                    repeat = 1,
-                    type = 'array',
-                    value,
-                } = copy.templatingArray as TemplatingOptions
-
+            if (repeat !== null) {
+                // TODO: Support other kinds of types
                 // Support Arrays and Objects for now
-                if (type === 'array') {
+                if (type === 'array' && value !== undefined) {
                     return new Array(repeat)
                         .fill(null)
                         .map(() => typeof value === 'object' ? interpolateMockData(value, index) : replaceMatch(value, index))
                 }
 
-            }
             // Normal object
-            else {
+            } else {
                 copy[key] = interpolateMockData(copy[key] as Record<string, unknown>, index)
             }
 
-            // Primitive values
+        // Primitive values
         } else {
             copy[key] = replaceMatch(copy[key], index)
         }

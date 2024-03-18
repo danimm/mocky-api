@@ -28,18 +28,18 @@ describe("template engine: utils/generateMockData", (it) => {
     it("it should not contain any config keys", () => {
         type Hobbies = { hobbies: string[] }
         const repeat = 2
-        const hobbies = {
-            templatingArray: {
+        const mockData = {
+            templatingOptions: {
                 repeat,
                 value: 'gaming'
             }
         }
 
-        const match = generateMockData({ hobbies }, { repeat })
+        const match = generateMockData(mockData, { repeat })
 
-        expect(match[0]).toHaveProperty('hobbies')
-        expect(match[0]).not.toHaveProperty('templatingArray')
-        expect((match[0] as Hobbies).hobbies).toHaveLength(repeat)
+        expect(match[0]).not.toHaveProperty('templatingOptions')
+        expect(match[0]).toHaveLength(repeat)
+        expect(match[1]).toHaveLength(repeat)
     })
 
     it("should create more than one template", () => {
