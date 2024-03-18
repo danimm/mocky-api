@@ -75,4 +75,27 @@ describe("template engine: utils/generateMockData", (it) => {
 
         expect(match[0]).toHaveProperty('checkSwitchCase', 'Andre')
     })
+
+    it('should interpolate a switch case as an array', () => {
+        const mockData = {
+            checkSwitchCase: {
+                templatingOptions: {
+                    repeat: 2,
+                    switchCase: {
+                        check: '1',
+                        defaultCase: 'Jack',
+                        cases: [
+                            { match: '0', value: 'Andre' },
+                            { match: '1', value: 'Dani' },
+                            { match: '2', value: 'Diego' },
+                        ]
+                    }
+                }
+            }
+        }
+
+        const match = generateMockData(mockData, { repeat: 1 })
+
+        expect(match[0]).toHaveProperty('checkSwitchCase', ['Dani', 'Dani'])
+    })
 })

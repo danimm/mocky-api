@@ -31,4 +31,14 @@ describe("template engine: utils/interpolateMockData", (it) => {
         })
         expect(match2).toContain('test')
     })
+
+    it('should interpolate one of some of the provided inputs', () => {
+        const oneOf = ['Dani', 'Diego']
+        const mockData = {
+            templatingOptions: { oneOf }
+        }
+
+        const match = interpolateMockData(mockData)
+        expect(oneOf.includes(match as string)).toBeTruthy()
+    })
 })

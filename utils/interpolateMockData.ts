@@ -12,11 +12,13 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
     const {
         switchCase = null,
         oneOf = null,
-        someOf = null
+        someOf = null,
+        repeat = null,
+        type = null,
     } = templatingOptions
 
     if (switchCase as SwitchCase) {
-        const {check, defaultCase, cases} = templatingOptions.switchCase
+        const { check, defaultCase, cases} = templatingOptions.switchCase
 
         if ([check, defaultCase, cases].some((val) => val === undefined)) {
             return copy
@@ -31,7 +33,8 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
                 return c.match === match
         })
 
-        copy = foundMatch !== undefined ? replaceMatch(foundMatch.value, index) : replaceMatch(defaultCase, index)
+        const value  = foundMatch !== undefined ? replaceMatch(foundMatch.value, index) : replaceMatch(defaultCase, index)
+        copy = repeat !== null ? new Array(repeat).fill(null).map(() => value) : value
         return copy
     }
 
@@ -47,8 +50,9 @@ export function interpolateMockData(template: unknown, index: number = 0): unkno
         })
 
         return copy
-    } else if ('oneOf' in (copy as  Record<string, unknown>)) {
-        const { oneOf = []  } = copy as TemplatingOptions
+    }
+
+    if (oneOf && oneOf.length > 0) {
         // Get a random index from the oneOf array
         const randomIndex = Math.floor(Math.random() * oneOf.length)
 
