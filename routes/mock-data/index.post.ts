@@ -1,19 +1,58 @@
 export default defineEventHandler(async (event) => {
     try {
-        const { body } = await readBody(event)
+        const body = await readBody(event)
+        const { id, avoidRequest } = <{ id: string, avoidRequest?: string }>getQuery(event)
 
-        // TODO: check custom response from the client
+        if (!id) {
+            return createError({
+                message: 'You need to provide an id',
+                statusCode: 400
+            })
+        }
 
-        // TODO: Read the template information
+        // Avoid to fetch the data
+        if (avoidRequest === 'true') {
+            const { statusCode = null, response = {} } = body
 
-        // TODO: Update existing document...or not!
+            if (Object.keys(response).length === 0) {
+                return createError({
+                    message: 'You need to provide a correct structure: response object is missing',
+                    statusCode: 400
+                })
+            }
 
-        return $fetch('/mock-data/create', body)
+            if (statusCode) setResponseStatus(event, statusCode)
+
+            return await $fetch('/templating', {
+                method: 'POST',
+                body: response
+            })
+        }
+
+        // Fetch the data from the DB
+        const data = await $fetch('/mock-data', { query: { id } })
+
+        const { statusCode = null, response = {} } = data
+
+        if (Object.keys(response).length === 0) {
+            return createError({
+                message: 'You need to provide a correct structure: response object is missing',
+                statusCode: 400
+            })
+        }
+
+        if (statusCode) setResponseStatus(event, statusCode)
+
+        return await $fetch('/templating', {
+            method: 'POST',
+            body: response
+        })
+
 
     } catch (e) {
 
         return createError({
-            message: 'An error occurred when saving the document',
+            message: 'Bad request',
             statusCode: 400
         })
     }
