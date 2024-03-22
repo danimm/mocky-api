@@ -1,4 +1,4 @@
-import {AvailableMockData} from "../../types/availableMockData";
+import { AvailableMockData } from "../../types/availableMockData";
 
 export default defineEventHandler(async (event) => {
     if (!getCookie(event, 'uid')) {
