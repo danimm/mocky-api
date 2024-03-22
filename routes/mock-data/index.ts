@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
     const { id = '' } = getQuery<{ id: string }>(event)
 
     const { db } = useDB(event);
-    const { getDocument, getDocData  } = useFirestore(db, AvailableMockData.MockData)
+    const { getDocument, getDocData  } = useFirestore<Record<string, unknown>>(db, AvailableMockData.MockData)
 
     if (!id) {
         return createError({
@@ -18,7 +18,16 @@ export default defineEventHandler(async (event) => {
         const snapshot = await getDocument(id)
         const body = snapshot.data()
 
-        return await $fetch('/templating', { method: 'POST', body })
+        const { statusCode = null, response = null , ...data } = body
+
+        if (statusCode) setResponseStatus(event, statusCode as number)
+
+        console.log({ statusCode, response, data })
+
+        return await $fetch('/templating', {
+            method: 'POST',
+            body: response ?? data
+        })
 
 
     } catch (e) {
