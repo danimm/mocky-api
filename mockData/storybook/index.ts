@@ -1,5 +1,6 @@
 /** ✅
  * https://run.mocky.io/v3/fc382300-2377-4c7c-89ef-f1c1cf89b7b3
+ * 👉🏻 https://https://mocky-api.netlify.app?id=S8TFysacwlYrECQsCsHg ✅
  * Used in the following stories:
  *
  * intro-with-map
@@ -11,7 +12,7 @@ const mockData1 = {
 
 /**
  * https://mocky.com/mock-data/TZ9Pa5eCgh98AR6Cg6o9
- * https://run.mocky.io/v3/id=ea8b434f-294f-4008-9634-51c241fdca5b
+ * 👉🏻 https://https://mocky-api.netlify.app?id=TZ9Pa5eCgh98AR6Cg6o9 ✅
  * Used in the following stories:
  *
  * wizard-meter-reading-result
@@ -33,8 +34,9 @@ const mockData2 = {
     }
 }
 
-/**
+/** ✅
  * https://run.mocky.io/v3/56e387bb-a533-4c95-834c-a687558e2a80
+ * 👉🏻 https://https://mocky-api.netlify.app?id=GirJDMmMyTbGjcdRI5CT ✅
  * Used in the following stories:
  *
  * wizard-meter-reading-result
@@ -46,8 +48,9 @@ const mockData3 = {
     description: 'Ihr Beitrag hilft uns, unsere Lösungen noch besser an den Bedürfnissen unserer Kunden auszurichten.'
 }
 
-/**
+/** ✅
  * https://run.mocky.io/v3/f3226260-2e70-426f-a167-71e81220c02f
+ * 👉🏻 https://https://mocky-api.netlify.app?id=pzlzAum1lRGV2kaB4rja ✅
  * Used in the following stories:
  *
  * wizard-reloc-tenant-move-out
@@ -65,8 +68,9 @@ const mockData4 = {
     ]
 }
 
-/**
+/** ✅
  * https://run.mocky.io/v3/b759b63a-4c51-4cef-97f1-f628c446a84a
+ * 👉🏻 https://https://mocky-api.netlify.app?id=2ys6sM5OzJ3vnVXcPxDA ✅
  * Used in the following stories:
  *
  * wizard-price-result
@@ -78,6 +82,7 @@ const mockData5 = {
 
 /** ✅
  * https://run.mocky.io/v3/96b0df81-78de-45b2-a183-5000debd99d0
+ * 👉🏻 https://https://mocky-api.netlify.app?id=p74j4yrkRFid0r1D3VRN ✅
  * Used in the following stories:
  *
  * character-card-carousel
@@ -93,6 +98,7 @@ const mockData6 = {
 
 /** ✅
  * https://run.mocky.io/v3/1d506fa8-25d1-4dc5-a79c-b10f79777a78
+ * 👉🏻 https://https://mocky-api.netlify.app?id=A31rHTHhLqmkDO36CiIn ✅
  * Used in the following stories:
  *
  * form-address-input-field
@@ -173,8 +179,9 @@ const mockData7 = {
     ]
 }
 
-/**
+/** ✅
  * https://run.mocky.io/v3/bbab1eb5-7c04-4ac7-9e44-eb7ea1170c11
+ * 👉🏻 https://https://mocky-api.netlify.app?id=mCseDSZxvPyXHTbjMECS ✅
  * Used in the following stories:
  *
  * feedback
@@ -215,13 +222,9 @@ const mockData8 = {
     }
 }
 
-// {
-//     'title': 'Vielen Dank f\u00fcr Ihre R\u00fcckmeldung!',
-//     'description': 'Ihr Beitrag hilft uns, unsere L\u00f6sungen noch besser an den Bed\u00fcrfnissen unserer Kunden auszurichten.'
-// }
-
-/**
+/** ⚠️
  * https://run.mocky.io/v3/cb93dfb0-27f6-41f8-85b8-ae750905d383
+ * 👉🏻 https://https://mocky-api.netlify.app?id=pzlzAum1lRGV2kaB4rja ✅
  * Used in the following stories:
  *
  * survey
@@ -245,8 +248,9 @@ const mockData9 = {
     description: 'Ihr Beitrag hilft uns, unsere Lösungen noch besser an den Bedürfnissen unserer Kunden auszurichten.'
 }
 
-/**
+/** ✅
  * https://run.mocky.io/v3/f5edd634-b7b3-4dda-a80b-49c284e26370
+ * 👉🏻 https://https://mocky-api.netlify.app?id=srFzsOYMg29p6miPHYpc ✅
  * Used in the following stories:
  *
  * form-address-input-field
@@ -260,6 +264,7 @@ const mockData10 = {
 
 /** ✅
  * https://run.mocky.io/v3/c9001fdc-753e-40f4-87ce-de98291f2806
+ * 👉🏻 https://https://mocky-api.netlify.app?id=j9lMiKuHH6GwmIYGRX8Y ✅
  * Used in the following stories:
  *
  * wizard-pellets-shop-intro
@@ -297,6 +302,7 @@ const mockData11 = {
 
 /** ✅
  * https://run.mocky.io/v3/4da2be7c-8d90-4116-aff9-9c0051d066b4
+ * 👉🏻 https://https://mocky-api.netlify.app?id=wxEjCgIiKb68KpwEmuyd ✅
  * Used in the following stories:
  *
  * wizard-pellets-shop-intro
@@ -310,8 +316,9 @@ const mockData12 = {
     status_code: 404
 }
 
-/**
+/** ✅
  * https://run.mocky.io/v3/8a188ad3-2e70-4eab-b6cf-8071980e1b8f
+ * 👉🏻 https://https://mocky-api.netlify.app?id=aslg25rqGLtdAGjLGTiW ✅
  * Used in the following stories:
  *
  * wizard-pellets-shop-intro
@@ -326,6 +333,7 @@ const mockData13 = {
 
 /** ✅
  * https://run.mocky.io/v3/22479c96-a4ef-4020-a4e1-200a77a569d3
+ * 👉🏻 https://https://mocky-api.netlify.app?id=tyAX2XV1pXU4SH27kfzE ✅
  * Used in the following stories:
  *
  * wizard-pellets-shop-intro
@@ -350,12 +358,12 @@ const mockData14 = {
 }
 
 /** ✅
+ * 👉🏻 https://https://mocky-api.netlify.app?id=5LGpzvoIGm2iCBGtBnQb ✅
  * Used in the following stories:
  *
  * Services
  *
  */
-
 const mockDataServices = {
     title: 'Monatliche Kosten KIBAG Management AG',
     abo_cost_title: 'Abo-Kosten',
