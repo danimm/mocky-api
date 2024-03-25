@@ -3,6 +3,8 @@ node_modules
 .nitro
 .cache
 .output
+.idea
 .env
+.idea
 dist
 data
