@@ -24,7 +24,6 @@ export function useFirestore<T>(db: Firestore, collectionName: AvailableMockData
 
     function updateDocument(docId: string, payload: Record<string, unknown>) {
         return updateDoc(doc(db, collectionName, docId), payload)
-        // return updateDoc(useDocumentRef<T>(docId), payload)
     }
 
     function deleteDocument(docId: string): Promise<unknown> {
