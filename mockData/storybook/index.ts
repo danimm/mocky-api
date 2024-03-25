@@ -10,7 +10,8 @@ const mockData1 = {
 }
 
 /**
- * https://run.mocky.io/v3/ea8b434f-294f-4008-9634-51c241fdca5b
+ * https://mocky.com/mock-data/TZ9Pa5eCgh98AR6Cg6o9
+ * https://run.mocky.io/v3/id=ea8b434f-294f-4008-9634-51c241fdca5b
  * Used in the following stories:
  *
  * wizard-meter-reading-result
