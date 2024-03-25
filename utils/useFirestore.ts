@@ -1,6 +1,6 @@
 import {
     Firestore,
-    collection, doc, getDoc, getDocs,
+    collection, doc, getDoc, getDocs, updateDoc, deleteDoc,
     DocumentReference,QuerySnapshot, DocumentSnapshot, QueryDocumentSnapshot,
     DocumentData
 } from "@firebase/firestore";
@@ -20,6 +20,14 @@ export function useFirestore<T>(db: Firestore, collectionName: AvailableMockData
 
     function getDocument(...pathSegments: string[]) {
         return getDoc(useDocumentRef(...pathSegments))
+    }
+
+    function updateDocument(docId: string, payload: Record<string, unknown>) {
+        return updateDoc(doc(db, collectionName, docId), payload)
+    }
+
+    function deleteDocument(docId: string): Promise<unknown> {
+        return deleteDoc(doc(db, collectionName, docId))
     }
 
     // TODO: Error handler
@@ -51,6 +59,8 @@ export function useFirestore<T>(db: Firestore, collectionName: AvailableMockData
         useCollectionRef,
         useDocumentRef,
         getDocument,
+        updateDocument,
+        deleteDocument,
         fetchSubCollection,
         // Parse Data
         getDocsData,

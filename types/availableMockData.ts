@@ -6,12 +6,14 @@ import { SearchAddress } from "./evp-map/search_addresses";
 // Muss match the name of the collection in the database
 export enum AvailableMockData {
     Downloads = 'downloads',
+    MockData = 'mock-data',
     EvpMap_coordinates = 'coordinates_popup',
     EvpMap_search_addresses = 'search_addresses',
 }
 
 export interface MockDataMap {
     [AvailableMockData.Downloads]: [DownloadDoc, DownloadMetadata];
+    [AvailableMockData.MockData]: [DownloadDoc];
     [AvailableMockData.EvpMap_coordinates]: [CoordinatesPopup];
     [AvailableMockData.EvpMap_search_addresses]: [SearchAddress];
 }
