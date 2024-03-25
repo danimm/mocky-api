@@ -22,8 +22,6 @@ export default defineEventHandler(async (event) => {
 
         if (statusCode) setResponseStatus(event, statusCode as number)
 
-        console.log({ statusCode, response, data })
-
         return await $fetch('/templating', {
             method: 'POST',
             body: response ?? data
