@@ -1,6 +1,6 @@
 //https://nitro.unjs.io/config
 export default defineNitroConfig({
-    preset: "deno-deploy",
+    preset: "netlify",
     routeRules: {
         '/*': {
             // enable CORS
