@@ -1,10 +1,5 @@
 export default defineNitroConfig({
     preset: "netlify",
-    storage: {
-        mocks: {
-            driver: 'memory'
-        }
-    },
     devStorage: {
         mocks: {
             driver: 'fs',

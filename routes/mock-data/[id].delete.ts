@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 200)
 
         // Clear the cache
-        await storage.removeItem('docId')
+        await storage.removeItem(documentId)
 
         return { message: `The document was successfully deleted: ${documentId}` }
 

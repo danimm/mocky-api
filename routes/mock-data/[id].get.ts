@@ -5,10 +5,10 @@ export default defineEventHandler(async (event) => {
     const docId = getRouterParam(event, 'id')
 
     const storage = useStorage('mocks')
-    const hasCachedValues = await storage.hasItem('docId')
+    const hasCachedValues = await storage.hasItem(docId)
 
     if (hasCachedValues) {
-        return await storage.getItem('docId')
+        return await storage.getItem(docId)
     }
 
     const { db } = useDB(event);
