@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 200)
 
         // Cache the data
-        await storage.setItem('docId', body)
+        await storage.setItem(documentId, body)
 
         return { message: `Successfully added document with id: ${documentId}` }
 
