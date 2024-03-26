@@ -1,6 +1,11 @@
-//https://nitro.unjs.io/config
 export default defineNitroConfig({
     preset: "netlify",
+    storage: {
+        mocks: {
+            driver: 'fs',
+            base: './cache/mocks'
+        }
+    },
     routeRules: {
         '/*': {
             // enable CORS

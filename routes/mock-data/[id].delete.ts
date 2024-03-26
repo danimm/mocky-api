@@ -3,6 +3,7 @@ import { useFirestore } from "../../utils/useFirestore";
 
 export default defineEventHandler(async (event) => {
     const { password} = getQuery(event)
+    const storage = useStorage('mocks')
 
     // TODO: For now this endpoint will work just in the local environment, prod env variable is not set
     if (password !== process.env.ADMIN_PASSWORD) {
@@ -34,6 +35,9 @@ export default defineEventHandler(async (event) => {
 
         await deleteDocument(documentId)
         setResponseStatus(event, 200)
+
+        // Clear the cache
+        await storage.removeItem('docId')
 
         return { message: `The document was successfully deleted: ${documentId}` }
 

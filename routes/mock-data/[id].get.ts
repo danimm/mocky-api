@@ -4,6 +4,13 @@ import { useFirestore } from "../../utils/useFirestore";
 export default defineEventHandler(async (event) => {
     const docId = getRouterParam(event, 'id')
 
+    const storage = useStorage('mocks')
+    const hasCachedValues = await storage.hasItem('docId')
+
+    if (hasCachedValues) {
+        return await storage.getItem('docId')
+    }
+
     const { db } = useDB(event);
     const { getDocument } = useFirestore<Record<string, unknown>>(db, AvailableMockData.MockData)
 
@@ -30,6 +37,9 @@ export default defineEventHandler(async (event) => {
 
     // Set the status code if it was provided in the mock data
     if (typeof statusCode === 'number') setResponseStatus(event, statusCode, String(data.message) || '')
+
+    // Cache the data
+    await storage.setItem('docId', data)
 
     return data
 })
