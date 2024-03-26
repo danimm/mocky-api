@@ -2,6 +2,13 @@ export default defineNitroConfig({
     preset: "netlify",
     storage: {
         mocks: {
+            driver: 'netlifyBlobs',
+            name: 'mocks',
+            deployScoped: true,
+        }
+    },
+    devStorage: {
+        mocks: {
             driver: 'fs',
             base: './cache/mocks'
         }
