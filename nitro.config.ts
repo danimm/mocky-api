@@ -3,7 +3,6 @@ export default defineNitroConfig({
     storage: {
         mocks: {
             driver: 'netlifyBlobs',
-            name: 'mocks',
             deployScoped: true,
         }
     },
