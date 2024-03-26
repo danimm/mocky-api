@@ -4,6 +4,7 @@ export default defineEventHandler(async (event) => {
 
     const { password} = getQuery(event)
 
+    // TODO: For now this endpoint will work just in the local environment, prod env variable is not set
     if (password !== process.env.ADMIN_PASSWORD) {
         throw createError({
             message: 'Please enter the admin password to be able to enter data into the db',

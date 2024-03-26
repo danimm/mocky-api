@@ -2,12 +2,23 @@ import { AvailableMockData } from "../../types/availableMockData";
 import { useFirestore } from "../../utils/useFirestore";
 
 export default defineEventHandler(async (event) => {
-    if (!getCookie(event, 'uid')) {
+    const { password} = getQuery(event)
+
+    // TODO: For now this endpoint will work just in the local environment, prod env variable is not set
+    if (password !== process.env.ADMIN_PASSWORD) {
         throw createError({
-            message: 'please log in with your admin account to be able to enter data into the db',
+            message: 'Please enter the admin password to be able to enter data into the db',
             statusCode: 401
         })
     }
+
+    // TODO: Discover how to send cookies in Hoppscotch
+    // if (!getCookie(event, 'uid')) {
+    //     throw createError({
+    //         message: 'please log in with your admin account to be able to enter data into the db',
+    //         statusCode: 401
+    //     })
+    // }
 
     try {
         const { db } = useDB(event);
@@ -27,11 +38,9 @@ export default defineEventHandler(async (event) => {
         return { message: `The document was successfully deleted: ${documentId}` }
 
     } catch (e) {
-
         return createError({
             message: e.message,
             statusCode: 500,
         })
-
     }
 })
