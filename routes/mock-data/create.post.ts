@@ -3,7 +3,9 @@ import { AvailableMockData } from "../../types/availableMockData";
 export default defineEventHandler(async (event) => {
 
     const { password} = getQuery(event)
+    const storage = useStorage('mocks')
 
+    // TODO: For now this endpoint will work just in the local environment, prod env variable is not set
     if (password !== process.env.ADMIN_PASSWORD) {
         throw createError({
             message: 'Please enter the admin password to be able to enter data into the db',
@@ -25,6 +27,9 @@ export default defineEventHandler(async (event) => {
 
         const { id: documentId } = await addDocumentToCollection(AvailableMockData.MockData, body)
         setResponseStatus(event, 200)
+
+        // Cache the data
+        await storage.setItem('docId', body)
 
         return { message: `Successfully added document with id: ${documentId}` }
 
