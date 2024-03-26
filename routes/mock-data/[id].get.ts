@@ -2,13 +2,13 @@ import { AvailableMockData } from "../../types/availableMockData";
 import { useFirestore } from "../../utils/useFirestore";
 
 export default defineEventHandler(async (event) => {
-    const docId = getRouterParam(event, 'id')
+    const documentId = getRouterParam(event, 'id')
 
     const storage = useStorage('mocks')
-    const hasCachedValues = await storage.hasItem(docId)
+    const hasCachedValues = await storage.hasItem(documentId)
 
     if (hasCachedValues) {
-        return await storage.getItem(docId)
+        return await storage.getItem(documentId)
     }
 
     const { db } = useDB(event);
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     let body: Record<string, unknown> = {}
 
     try {
-        const snapshot = await getDocument(docId)
+        const snapshot = await getDocument(documentId)
         body = snapshot.data()
     } catch (e) {
         console.error(e, 'error!!')
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
     if (typeof statusCode === 'number') setResponseStatus(event, statusCode, String(data.message) || '')
 
     // Cache the data
-    await storage.setItem('docId', data)
+    await storage.setItem(documentId, data)
 
     return data
 })
